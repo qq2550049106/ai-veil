@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- AI-Veil 遮罩窗口页面：整窗透明、无边框、不可选中；DOM 严格按实现契约 §4 组织。
+     只引入 overlay.css / border/styles.css / 4 个主题文件，主题靠 body[data-theme] 作用域生效。 -->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <title>AI-Veil Overlay</title>
+    <style>
+      /* 首帧兜底：CSS 文件尚未解析时也要保持完全透明，避免白色闪屏 */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        overflow: hidden;
+      }
+    </style>
+    <link rel="stylesheet" href="overlay.css" />
+    <link rel="stylesheet" href="border/styles.css" />
+    <link rel="stylesheet" href="themes/orange.css" />
+    <link rel="stylesheet" href="themes/cyan.css" />
+    <link rel="stylesheet" href="themes/mono.css" />
+    <link rel="stylesheet" href="themes/contrast.css" />
+  </head>
+  <body data-theme="orange">
+    <div id="veil-root">
+      <!-- 边框层：由 border.js 独占管理；border === null 时必须把该节点整个移除 -->
+      <div id="border-layer"></div>
+      <!-- 横幅层：由 banner.js 独占管理；banner === null 时必须把该节点整个移除 -->
+      <div id="banner-layer"></div>
+    </div>
+    <script type="module" src="overlay.js"></script>
+  </body>
+</html>

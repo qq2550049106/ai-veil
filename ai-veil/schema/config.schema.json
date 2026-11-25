@@ -1,0 +1,768 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-veil.local/schema/config.schema.json",
+  "title": "AI-Veil 配置",
+  "description": "AI-Veil 桌面插件的完整配置：范围边框、横幅形状、文案、声音、通知、规则、热键、素材与隐私。键名与默认值以 examples/config.sample.toml 为准。",
+  "type": "object",
+  "additionalProperties": true,
+  "$defs": {
+    "color": {
+      "type": "string",
+      "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+      "description": "十六进制颜色，支持 #RGB、#RRGGBB 与带透明度的 #RRGGBBAA。"
+    },
+    "wave": {
+      "type": "string",
+      "enum": ["sine", "square", "sawtooth", "triangle"],
+      "description": "Web Audio 振荡器波形。"
+    },
+    "idleName": {
+      "type": "string",
+      "enum": ["none", "blink", "wag", "float", "wiggle"],
+      "description": "待机动画名。"
+    },
+    "perEventOverride": {
+      "type": "object",
+      "description": "按事件类型覆盖边框样式，只写差异项，未写的键沿用边框基础配置。",
+      "additionalProperties": false,
+      "properties": {
+        "visible": {
+          "type": "boolean",
+          "description": "该事件下是否显示边框。"
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "该事件下的边框起始颜色。"
+        },
+        "color_end": {
+          "$ref": "#/$defs/color",
+          "description": "该事件下的渐变终止颜色。"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32,
+          "description": "该事件下的边框宽度（像素）。"
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64,
+          "description": "该事件下的边框圆角半径（像素）。"
+        },
+        "style": {
+          "type": "string",
+          "enum": ["solid", "dashed", "dotted", "double", "gradient"],
+          "description": "该事件下的边框线型。"
+        },
+        "animation": {
+          "type": "string",
+          "enum": ["none", "breathe", "dash", "scan", "pulse"],
+          "description": "该事件下的边框动画。"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "该事件下的边框不透明度。"
+        },
+        "inset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200,
+          "description": "该事件下的边框内缩像素。"
+        }
+      }
+    }
+  },
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "元信息：配置版本与主题配色。",
+      "additionalProperties": true,
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "配置结构版本号，升级时由后端迁移。"
+        },
+        "theme": {
+          "type": "string",
+          "enum": ["orange", "cyan", "mono", "contrast"],
+          "default": "orange",
+          "description": "界面配色主题。"
+        }
+      }
+    },
+    "border": {
+      "type": "object",
+      "description": "范围边框层：是否出现、覆盖范围、粗细、颜色与动画。",
+      "additionalProperties": true,
+      "properties": {
+        "visible": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否显示范围边框，关闭后完全不创建边框层。"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["fullscreen", "region", "window", "none"],
+          "default": "fullscreen",
+          "description": "边框覆盖范围。"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32,
+          "default": 4,
+          "description": "边框宽度（像素）。"
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64,
+          "default": 12,
+          "description": "边框圆角半径（像素）。"
+        },
+        "style": {
+          "type": "string",
+          "enum": ["solid", "dashed", "dotted", "double", "gradient"],
+          "default": "solid",
+          "description": "边框线型，gradient 时配合 color_end 使用。"
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "default": "#FF7A18",
+          "description": "边框起始颜色。"
+        },
+        "color_end": {
+          "$ref": "#/$defs/color",
+          "default": "#FFB347",
+          "description": "渐变终止颜色，仅 style 为 gradient 时生效。"
+        },
+        "glow": {
+          "type": "string",
+          "default": "0 0 24px rgba(255,122,24,.45)",
+          "description": "外发光 CSS box-shadow 值。"
+        },
+        "animation": {
+          "type": "string",
+          "enum": ["none", "breathe", "dash", "scan", "pulse"],
+          "default": "breathe",
+          "description": "边框动画类型。"
+        },
+        "animation_duration": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10,
+          "default": 2.0,
+          "description": "边框动画一轮的时长（秒）。"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 1.0,
+          "description": "边框整体不透明度。"
+        },
+        "inset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200,
+          "default": 0,
+          "description": "边框向内收缩的像素，避免遮挡系统 UI。"
+        },
+        "follow_display": {
+          "type": "boolean",
+          "default": true,
+          "description": "多显示器时边框是否跟随目标屏幕。"
+        },
+        "per_event": {
+          "type": "object",
+          "description": "按事件类型覆盖边框样式，键名为事件名。",
+          "additionalProperties": {
+            "$ref": "#/$defs/perEventOverride"
+          },
+          "default": {
+            "need_human": { "color": "#FF3B30", "animation": "pulse", "width": 6 },
+            "error": { "color": "#FF3B30", "animation": "scan" },
+            "heartbeat": { "visible": false }
+          }
+        }
+      }
+    },
+    "banner": {
+      "type": "object",
+      "description": "横幅与形状：形状、变体、位置、尺寸与文字排版。",
+      "additionalProperties": true,
+      "properties": {
+        "visible": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否显示横幅层。"
+        },
+        "shape": {
+          "type": "string",
+          "enum": ["rect", "pill", "speech_bubble", "cat", "paw", "blob", "star", "custom_svg", "image"],
+          "default": "cat",
+          "description": "横幅形状名，对应 src/shapes 下的渲染模块。"
+        },
+        "variant": {
+          "type": "string",
+          "enum": ["orange", "black", "white"],
+          "default": "orange",
+          "description": "cat 形状的内置配色变体。"
+        },
+        "anchor": {
+          "type": "string",
+          "enum": ["top-center", "top-left", "top-right", "bottom-center", "custom"],
+          "default": "top-center",
+          "description": "横幅相对视口的锚点。"
+        },
+        "offset": {
+          "type": "object",
+          "description": "相对锚点的像素偏移。",
+          "additionalProperties": false,
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": -10000,
+              "maximum": 10000,
+              "default": 0,
+              "description": "水平偏移（像素）。"
+            },
+            "y": {
+              "type": "number",
+              "minimum": -10000,
+              "maximum": 10000,
+              "default": 24,
+              "description": "垂直偏移（像素）。"
+            }
+          }
+        },
+        "size": {
+          "type": "object",
+          "description": "横幅外框尺寸。",
+          "additionalProperties": false,
+          "properties": {
+            "w": {
+              "type": "number",
+              "minimum": 64,
+              "maximum": 4000,
+              "default": 320,
+              "description": "横幅宽度（像素）。"
+            },
+            "h": {
+              "type": "number",
+              "minimum": 32,
+              "maximum": 2000,
+              "default": 96,
+              "description": "横幅高度（像素）。"
+            }
+          }
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 5,
+          "default": 1.0,
+          "description": "横幅整体缩放倍数。"
+        },
+        "rotation": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "default": 0,
+          "description": "横幅旋转角度（度）。"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.95,
+          "description": "横幅整体不透明度。"
+        },
+        "blur": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60,
+          "default": 20,
+          "description": "横幅背景模糊强度，部分形状不支持。"
+        },
+        "padding": {
+          "type": "object",
+          "description": "文字相对形状安全区的内边距。",
+          "additionalProperties": false,
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 200,
+              "default": 18,
+              "description": "水平内边距（像素）。"
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 200,
+              "default": 12,
+              "description": "垂直内边距（像素）。"
+            }
+          }
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "default": "#FFFFFF",
+          "description": "横幅文字颜色。"
+        },
+        "align": {
+          "type": "string",
+          "enum": ["left", "center", "right"],
+          "default": "center",
+          "description": "横幅文字水平对齐方式。"
+        },
+        "max_lines": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "default": 2,
+          "description": "文字最多显示行数。"
+        },
+        "overflow": {
+          "type": "string",
+          "enum": ["ellipsis", "wrap", "shrink"],
+          "default": "ellipsis",
+          "description": "文字超出行数限制时的处理方式。"
+        },
+        "font": {
+          "type": "object",
+          "description": "横幅字体设置。",
+          "additionalProperties": true,
+          "properties": {
+            "family": {
+              "type": "string",
+              "default": "system",
+              "description": "字族名，可用 system 或具体字体名。"
+            },
+            "size": {
+              "type": "number",
+              "minimum": 8,
+              "maximum": 48,
+              "default": 15,
+              "description": "字号（像素）。"
+            },
+            "weight": {
+              "type": "number",
+              "minimum": 100,
+              "maximum": 900,
+              "default": 500,
+              "description": "字重。"
+            },
+            "letter_spacing": {
+              "type": "number",
+              "minimum": -5,
+              "maximum": 20,
+              "default": 0.3,
+              "description": "字间距（像素）。"
+            }
+          }
+        },
+        "custom": {
+          "type": "object",
+          "description": "自定义素材设置，shape 为 custom_svg 或 image 时生效。",
+          "additionalProperties": true,
+          "properties": {
+            "svg_path": {
+              "type": "string",
+              "default": "~/Pictures/mascot.svg",
+              "description": "自定义 SVG 或图片的本地路径。"
+            },
+            "image_fit": {
+              "type": "string",
+              "enum": ["contain", "cover", "fill"],
+              "default": "contain",
+              "description": "图片在形状内的填充方式。"
+            },
+            "tint": {
+              "$ref": "#/$defs/color",
+              "default": "#FF7A18",
+              "description": "单色着色，仅对 SVG 生效。"
+            }
+          }
+        },
+        "animation": {
+          "type": "object",
+          "description": "横幅动画：待机、入场与时长。",
+          "additionalProperties": true,
+          "properties": {
+            "idle": {
+              "description": "待机动画，单个用字符串，多个同时开启用字符串数组。",
+              "default": "blink",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": ["none", "blink", "wag", "float", "wiggle"]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["blink", "wag", "float", "wiggle"]
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              ]
+            },
+            "enter": {
+              "type": "string",
+              "enum": ["none", "fade", "slide", "pop"],
+              "default": "pop",
+              "description": "入场动画类型。"
+            },
+            "duration": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 5,
+              "default": 0.35,
+              "description": "入场动画时长（秒）。"
+            }
+          }
+        }
+      }
+    },
+    "text": {
+      "type": "object",
+      "description": "事件文案模板，可用变量 {agent} {action} {target} {duration} {time}。",
+      "additionalProperties": true,
+      "properties": {
+        "start": {
+          "type": "string",
+          "default": "{agent} 正在接管你的电脑",
+          "description": "会话开始时的文案。"
+        },
+        "running": {
+          "type": "string",
+          "default": "{agent} 正在操控 · {action}",
+          "description": "执行过程中的文案。"
+        },
+        "waiting": {
+          "type": "string",
+          "default": "需要你介入 · {action}",
+          "description": "等待人工介入时的文案。"
+        },
+        "end": {
+          "type": "string",
+          "default": "操控已结束 · 共 {duration}",
+          "description": "会话结束时的文案。"
+        },
+        "error": {
+          "type": "string",
+          "default": "操控异常中断 · {action}",
+          "description": "执行出错时的文案。"
+        },
+        "cancel_button": {
+          "type": "string",
+          "default": "中止",
+          "description": "中止按钮上的文字。"
+        }
+      }
+    },
+    "sound": {
+      "type": "object",
+      "description": "声音反馈：开关、音量、节流与合成音参数。",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否启用声音反馈。"
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.6,
+          "description": "音量（0 到 1）。"
+        },
+        "throttle_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "default": 800,
+          "description": "两次提示音之间的最小间隔（毫秒）。"
+        },
+        "custom_path": {
+          "type": "string",
+          "default": "",
+          "description": "自定义音频路径，留空则使用 Web Audio 合成音。"
+        },
+        "synth": {
+          "type": "object",
+          "description": "Web Audio 合成音参数。",
+          "additionalProperties": true,
+          "properties": {
+            "start_wave": {
+              "$ref": "#/$defs/wave",
+              "default": "sine",
+              "description": "开始提示音的波形。"
+            },
+            "start_freq": {
+              "type": "number",
+              "minimum": 100,
+              "maximum": 4000,
+              "default": 660,
+              "description": "开始提示音的频率（赫兹）。"
+            },
+            "start_dur": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 2,
+              "default": 0.12,
+              "description": "开始提示音的时长（秒）。"
+            },
+            "end_wave": {
+              "$ref": "#/$defs/wave",
+              "default": "sine",
+              "description": "结束提示音的波形。"
+            },
+            "end_freq": {
+              "type": "number",
+              "minimum": 100,
+              "maximum": 4000,
+              "default": 440,
+              "description": "结束提示音的频率（赫兹）。"
+            },
+            "end_dur": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 2,
+              "default": 0.18,
+              "description": "结束提示音的时长（秒）。"
+            },
+            "alert_wave": {
+              "$ref": "#/$defs/wave",
+              "default": "square",
+              "description": "警示提示音的波形。"
+            },
+            "alert_freq": {
+              "type": "number",
+              "minimum": 100,
+              "maximum": 4000,
+              "default": 880,
+              "description": "警示提示音的频率（赫兹）。"
+            },
+            "alert_dur": {
+              "type": "number",
+              "minimum": 0.01,
+              "maximum": 2,
+              "default": 0.25,
+              "description": "警示提示音的时长（秒）。"
+            }
+          }
+        },
+        "events": {
+          "type": "object",
+          "description": "按事件开关是否播放提示音。",
+          "additionalProperties": true,
+          "properties": {
+            "session_start": {
+              "type": "boolean",
+              "default": true,
+              "description": "会话开始时是否播放提示音。"
+            },
+            "session_end": {
+              "type": "boolean",
+              "default": true,
+              "description": "会话结束时是否播放提示音。"
+            },
+            "need_human": {
+              "type": "boolean",
+              "default": true,
+              "description": "需要人工介入时是否播放提示音。"
+            },
+            "error": {
+              "type": "boolean",
+              "default": true,
+              "description": "执行出错时是否播放提示音。"
+            },
+            "action": {
+              "type": "boolean",
+              "default": false,
+              "description": "动作级事件是否播放提示音，默认关闭以避免噪音。"
+            }
+          }
+        }
+      }
+    },
+    "notify": {
+      "type": "object",
+      "description": "桌面通知设置。",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否启用桌面通知。"
+        },
+        "duration_sec": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "default": 5,
+          "description": "通知显示时长（秒）。"
+        },
+        "thumbnail": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否附带截屏缩略图，默认关闭以保护隐私。"
+        },
+        "silent": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否静音通知。"
+        }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "description": "会话规则：超时、最小接管时长、免打扰与进程过滤。",
+      "additionalProperties": true,
+      "properties": {
+        "ttl_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 600000,
+          "default": 30000,
+          "description": "会话超时自动结束的毫秒数。"
+        },
+        "min_takeover_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "default": 600,
+          "description": "最小接管时长（毫秒），防止遮罩闪烁。"
+        },
+        "ignore_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["heartbeat"],
+          "description": "需要忽略的事件名列表。"
+        },
+        "dnd_start": {
+          "type": "string",
+          "anyOf": [
+            { "const": "" },
+            { "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" }
+          ],
+          "default": "",
+          "description": "免打扰开始时间，格式 HH:MM，留空表示不启用。"
+        },
+        "dnd_end": {
+          "type": "string",
+          "anyOf": [
+            { "const": "" },
+            { "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" }
+          ],
+          "default": "",
+          "description": "免打扰结束时间，格式 HH:MM，留空表示不启用。"
+        },
+        "process_whitelist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "只对这些进程显示遮罩的白名单。"
+        },
+        "process_blacklist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "永不显示遮罩的进程黑名单。"
+        }
+      }
+    },
+    "hotkeys": {
+      "type": "object",
+      "description": "全局热键，格式为修饰键加主键，例如 Ctrl+Alt+Esc。",
+      "additionalProperties": true,
+      "properties": {
+        "cancel": {
+          "type": "string",
+          "pattern": "^([A-Za-z0-9]+\\+)*[A-Za-z0-9]+$",
+          "default": "Ctrl+Alt+Esc",
+          "description": "中止当前会话的热键。"
+        },
+        "toggle_visible": {
+          "type": "string",
+          "pattern": "^([A-Za-z0-9]+\\+)*[A-Za-z0-9]+$",
+          "default": "Ctrl+Alt+V",
+          "description": "临时显示或隐藏遮罩的热键。"
+        },
+        "next_theme": {
+          "type": "string",
+          "pattern": "^([A-Za-z0-9]+\\+)*[A-Za-z0-9]+$",
+          "default": "Ctrl+Alt+T",
+          "description": "循环切换主题的热键。"
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "description": "素材管线：搜索目录、体积与尺寸上限、SVG 净化开关。",
+      "additionalProperties": true,
+      "properties": {
+        "dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["~/.ai-veil/assets/"],
+          "description": "素材搜索目录列表。"
+        },
+        "max_bytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 5242880,
+          "default": 524288,
+          "description": "单个素材文件的字节上限。"
+        },
+        "max_px": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 16384,
+          "default": 4096,
+          "description": "素材的最大边长（像素）。"
+        },
+        "sanitize_svg": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否对 SVG 做白名单净化后再渲染。"
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "description": "隐私设置：上传开关固定关闭，数据仅在本机处理。",
+      "additionalProperties": true,
+      "properties": {
+        "upload_enabled": {
+          "const": false,
+          "default": false,
+          "description": "是否允许上传，固定为 false，所有处理都在本机完成。"
+        },
+        "log_dir": {
+          "type": "string",
+          "default": "~/.ai-veil/logs",
+          "description": "日志文件所在目录。"
+        }
+      }
+    }
+  }
+}

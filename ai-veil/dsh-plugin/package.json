@@ -1,0 +1,13 @@
+{
+  "name": "@local/ai-veil-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "把 DeepSeek Harness 的 AI 接管动作转成 AI-Veil 事件的 MCP 桥",
+  "type": "module",
+  "exports": {
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": ["README.md", "cordis.patch.yml", "bridge.mjs", "demo", "locale/*.json", "docs", "icon.svg"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}

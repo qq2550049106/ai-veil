@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120" role="img">
+  <title>有机曲线</title>
+  <defs>
+    <linearGradient id="blobFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF7A18"/>
+      <stop offset="1" stop-color="#FFB347"/>
+    </linearGradient>
+  </defs>
+  <!-- 四段贝塞尔拼成的略不对称有机轮廓 -->
+  <path d="M60 12 C110 2.4 172 10.8 186 38.4 C196 67.2 172 105.6 124 111.6 C74 117.6 18 104.4 12 74.4 C6 46.8 22 19.2 60 12 Z"
+        fill="url(#blobFill)" fill-opacity="0.8" stroke="#C9590B" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 内层柔光，增加体积感 -->
+  <path d="M70 26 C110 18 156 26 167 46 C175 64 156 88 122 93 C88 98 44 88 40 66 C37 48 48 31 70 26 Z"
+        fill="#FFFFFF" fill-opacity="0.18"/>
+</svg>
