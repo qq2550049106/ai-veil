@@ -1,7 +1,0 @@
-{
-  "meta": {
-    "title": "AI-Veil 接管提示器桥",
-    "description": "把 Agent 的接管动作转发给 AI-Veil 桌面端，显示系统级横幅与边框、播放提示音、发桌面通知，并提供独立中止通道。",
-    "detail": "docs/DETAIL.md"
-  }
-}
