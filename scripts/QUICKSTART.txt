@@ -1,0 +1,44 @@
+AI-Veil 1.0.0（Windows x64 · 便携版 · 自带运行时）
+==================================================
+
+双击 AI-Veil.exe 即可运行，不需要安装 Node / Electron，也不需要管理员权限。
+
+第一次运行会发生什么
+--------------------
+1. 右键托盘图标可以看到菜单（灰色圆点 = 待机）
+2. 自动创建 ~/.ai-veil/（配置、日志、素材都在这里）
+3. 开始监听 ~/.ai-veil/events.jsonl —— DeepSeek Harness 的 MCP 桥就是往这个文件写事件
+
+没有 Agent 也能看效果
+---------------------
+托盘右键 → 「演示回放（mock 11 条事件）」
+会依次播放：接管开始（橙色边框 + 猫咪横幅）→ 执行动作 → 需要你介入（红框）→ 结束淡出。
+
+停止 / 退出
+---------------------
+托盘右键 → 「退出 AI-Veil」。
+中止通道：Ctrl+Alt+Esc（可在 ~/.ai-veil/config.toml 里改）。
+临时隐藏：Ctrl+Alt+V；切换主题：Ctrl+Alt+T。
+
+配置与日志
+---------------------
+配置：%USERPROFILE%\.ai-veil\config.toml（改完 500ms 内自动热加载）
+日志：%USERPROFILE%\.ai-veil\logs\ai-veil.log
+崩溃：%USERPROFILE%\.ai-veil\logs\crash.log
+中止记录：%USERPROFILE%\.ai-veil\cancel\*.json
+
+重要：不要把本目录放在含中文的路径下
+---------------------
+Windows 上 Electron 的 electron.exe 位于非 ASCII 路径时会直接崩溃（0xc0000005）。
+请解压到类似 D:\Tools\AI-Veil\ 这样的纯英文路径。
+
+杀毒软件提示
+---------------------
+便携版没有代码签名，部分安全软件会拦截或弹窗，请选择"允许/信任"。
+若程序闪退且日志为空，先看是不是被安全软件拦了。
+
+安全说明
+---------------------
+- 所有事件、截图、日志只写本机 ~/.ai-veil/，无任何网络请求
+- 通知缩略图默认关闭（notify.thumbnail=false），开启后也只落盘不上传
+- 源码：MIT License

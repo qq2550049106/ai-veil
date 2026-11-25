@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<!-- AI-Veil 设置窗口结构：左侧导航 + 中间配置表单 + 右侧横幅预览 + 底部操作区 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>AI-Veil · 设置</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body data-theme="orange">
+  <!-- 顶部标题栏：标题 + 保存状态条 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1 class="brand-title">AI-Veil · 设置</h1>
+    </div>
+    <div id="save-status" class="save-status" data-kind="info" role="status" aria-live="polite">就绪</div>
+  </header>
+
+  <div class="shell">
+    <!-- 左侧导航：切换中间面板 -->
+    <nav class="nav" id="settings-nav" aria-label="设置导航">
+      <button class="nav-item is-active" type="button" data-panel-nav="appearance" aria-selected="true">外观（边框）</button>
+      <button class="nav-item" type="button" data-panel-nav="banner" aria-selected="false">横幅形状</button>
+      <button class="nav-item" type="button" data-panel-nav="text" aria-selected="false">文案</button>
+      <button class="nav-item" type="button" data-panel-nav="sound" aria-selected="false">声音</button>
+      <button class="nav-item" type="button" data-panel-nav="notify" aria-selected="false">通知</button>
+      <button class="nav-item" type="button" data-panel-nav="rules" aria-selected="false">规则</button>
+      <button class="nav-item" type="button" data-panel-nav="hotkeys" aria-selected="false">交互</button>
+      <button class="nav-item" type="button" data-panel-nav="assets" aria-selected="false">素材</button>
+      <button class="nav-item" type="button" data-panel-nav="diag" aria-selected="false">诊断</button>
+    </nav>
+
+    <!-- 中间表单：每个控件通过 data-path 绑定 Config 嵌套路径 -->
+    <main class="panels">
+
+      <!-- ========== 外观：主题 + 范围边框 ========== -->
+      <section class="panel is-active" data-panel="appearance">
+        <div class="panel-head">
+          <h2>外观 · 范围边框</h2>
+          <p class="hint">边框层可以整体关闭；颜色、动画、宽度可按事件类型单独覆盖。</p>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">主题色</h3>
+          <div class="theme-cards" id="theme-cards">
+            <button class="theme-card" type="button" data-theme-card="orange">
+              <span class="pv-token" data-token="orange" aria-hidden="true"></span>
+              <span class="theme-name">橙光</span>
+              <span class="theme-tag">orange</span>
+            </button>
+            <button class="theme-card" type="button" data-theme-card="cyan">
+              <span class="pv-token" data-token="cyan" aria-hidden="true"></span>
+              <span class="theme-name">青蓝</span>
+              <span class="theme-tag">cyan</span>
+            </button>
+            <button class="theme-card" type="button" data-theme-card="mono">
+              <span class="pv-token" data-token="mono" aria-hidden="true"></span>
+              <span class="theme-name">灰阶</span>
+              <span class="theme-tag">mono</span>
+            </button>
+            <button class="theme-card" type="button" data-theme-card="contrast">
+              <span class="pv-token" data-token="contrast" aria-hidden="true"></span>
+              <span class="theme-name">高对比</span>
+              <span class="theme-tag">contrast</span>
+            </button>
+          </div>
+          <p class="hint">主题只决定背景、描边与按钮配色；边框颜色仍由下方配置决定。</p>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">边框基础</h3>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">显示边框</span>
+                <span class="hint">关闭后完全不创建边框层</span>
+              </span>
+              <input class="switch" type="checkbox" data-path="border.visible" />
+            </label>
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">跟随目标屏幕</span>
+                <span class="hint">多显示器时在目标屏绘制</span>
+              </span>
+              <input class="switch" type="checkbox" data-path="border.follow_display" />
+            </label>
+          </div>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">覆盖范围</span>
+              <select data-path="border.scope">
+                <option value="fullscreen">fullscreen（全屏）</option>
+                <option value="region">region（区域）</option>
+                <option value="window">window（窗口）</option>
+                <option value="none">none（不绘制）</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">线型</span>
+              <select data-path="border.style">
+                <option value="solid">solid</option>
+                <option value="dashed">dashed</option>
+                <option value="dotted">dotted</option>
+                <option value="double">double</option>
+                <option value="gradient">gradient</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">动画</span>
+              <select data-path="border.animation">
+                <option value="none">none</option>
+                <option value="breathe">breathe</option>
+                <option value="dash">dash</option>
+                <option value="scan">scan</option>
+                <option value="pulse">pulse</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">宽度 px（1–32）</span>
+              <input type="number" data-path="border.width" min="1" max="32" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">圆角 px（0–64）</span>
+              <input type="number" data-path="border.radius" min="0" max="64" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">内缩 px</span>
+              <input type="number" data-path="border.inset" min="0" max="200" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">动画时长 s（0.1–10）</span>
+              <input type="number" data-path="border.animation_duration" min="0.1" max="10" step="0.1" />
+            </label>
+            <label class="field">
+              <span class="field-label">起始颜色</span>
+              <input type="color" data-path="border.color" />
+            </label>
+            <label class="field">
+              <span class="field-label">终止颜色（渐变用）</span>
+              <input type="color" data-path="border.color_end" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">外发光 box-shadow</span>
+              <input type="text" data-path="border.glow" spellcheck="false" placeholder="0 0 24px rgba(255,122,24,.45)" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">不透明度（0–1）</span>
+              <input type="range" data-path="border.opacity" min="0" max="1" step="0.05" />
+            </label>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">按事件覆盖</h3>
+          <p class="hint">只填写需要覆盖的项；留空表示沿用边框基础配置。</p>
+
+          <div class="per-event">
+            <h4 class="per-event-title">need_human <span class="hint">需要人工介入</span></h4>
+            <div class="fields">
+              <label class="field">
+                <span class="field-label">颜色（留空 = 不覆盖）</span>
+                <input type="text" data-path="border.per_event.need_human.color" spellcheck="false" maxlength="9" placeholder="留空 = 不覆盖" />
+              </label>
+              <label class="field">
+                <span class="field-label">动画</span>
+                <select data-path="border.per_event.need_human.animation">
+                  <option value="">不覆盖</option>
+                  <option value="none">none</option>
+                  <option value="breathe">breathe</option>
+                  <option value="dash">dash</option>
+                  <option value="scan">scan</option>
+                  <option value="pulse">pulse</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">宽度（留空 = 不覆盖）</span>
+                <input type="number" data-path="border.per_event.need_human.width" data-optional="1" min="1" max="32" step="1" placeholder="留空 = 不覆盖" />
+              </label>
+              <label class="field">
+                <span class="field-label">显示</span>
+                <select data-path="border.per_event.need_human.visible" data-kind="tristate">
+                  <option value="">不覆盖</option>
+                  <option value="true">显示</option>
+                  <option value="false">隐藏</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="per-event">
+            <h4 class="per-event-title">error <span class="hint">执行出错</span></h4>
+            <div class="fields">
+              <label class="field">
+                <span class="field-label">颜色（留空 = 不覆盖）</span>
+                <input type="text" data-path="border.per_event.error.color" spellcheck="false" maxlength="9" placeholder="留空 = 不覆盖" />
+              </label>
+              <label class="field">
+                <span class="field-label">动画</span>
+                <select data-path="border.per_event.error.animation">
+                  <option value="">不覆盖</option>
+                  <option value="none">none</option>
+                  <option value="breathe">breathe</option>
+                  <option value="dash">dash</option>
+                  <option value="scan">scan</option>
+                  <option value="pulse">pulse</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">宽度（留空 = 不覆盖）</span>
+                <input type="number" data-path="border.per_event.error.width" data-optional="1" min="1" max="32" step="1" placeholder="留空 = 不覆盖" />
+              </label>
+              <label class="field">
+                <span class="field-label">显示</span>
+                <select data-path="border.per_event.error.visible" data-kind="tristate">
+                  <option value="">不覆盖</option>
+                  <option value="true">显示</option>
+                  <option value="false">隐藏</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="per-event">
+            <h4 class="per-event-title">heartbeat <span class="hint">心跳保活</span></h4>
+            <div class="fields">
+              <label class="field">
+                <span class="field-label">颜色（留空 = 不覆盖）</span>
+                <input type="text" data-path="border.per_event.heartbeat.color" spellcheck="false" maxlength="9" placeholder="留空 = 不覆盖" />
+              </label>
+              <label class="field">
+                <span class="field-label">动画</span>
+                <select data-path="border.per_event.heartbeat.animation">
+                  <option value="">不覆盖</option>
+                  <option value="none">none</option>
+                  <option value="breathe">breathe</option>
+                  <option value="dash">dash</option>
+                  <option value="scan">scan</option>
+                  <option value="pulse">pulse</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">宽度（留空 = 不覆盖）</span>
+                <input type="number" data-path="border.per_event.heartbeat.width" data-optional="1" min="1" max="32" step="1" placeholder="留空 = 不覆盖" />
+              </label>
+              <label class="field">
+                <span class="field-label">显示</span>
+                <select data-path="border.per_event.heartbeat.visible" data-kind="tristate">
+                  <option value="">不覆盖</option>
+                  <option value="true">显示</option>
+                  <option value="false">隐藏</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 横幅形状 ========== -->
+      <section class="panel" data-panel="banner">
+        <div class="panel-head">
+          <h2>横幅形状</h2>
+          <p class="hint">选择形状后右侧预览会按当前配置即时重绘。</p>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">形状</h3>
+          <div class="shape-chips" id="shape-chips">
+            <button class="shape-chip" type="button" data-shape-chip="rect">rect</button>
+            <button class="shape-chip" type="button" data-shape-chip="pill">pill</button>
+            <button class="shape-chip" type="button" data-shape-chip="speech_bubble">speech_bubble</button>
+            <button class="shape-chip" type="button" data-shape-chip="cat">cat</button>
+            <button class="shape-chip" type="button" data-shape-chip="paw">paw</button>
+            <button class="shape-chip" type="button" data-shape-chip="blob">blob</button>
+            <button class="shape-chip" type="button" data-shape-chip="star">star</button>
+            <button class="shape-chip" type="button" data-shape-chip="custom_svg">custom_svg</button>
+            <button class="shape-chip" type="button" data-shape-chip="image">image</button>
+          </div>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">显示横幅</span>
+                <span class="hint">关闭后不渲染横幅层（中止通道仍然可用）</span>
+              </span>
+              <input class="switch" type="checkbox" data-path="banner.visible" />
+            </label>
+          </div>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">cat 变体</span>
+              <select data-path="banner.variant">
+                <option value="orange">orange</option>
+                <option value="black">black</option>
+                <option value="white">white</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">锚点</span>
+              <select data-path="banner.anchor">
+                <option value="top-center">top-center</option>
+                <option value="top-left">top-left</option>
+                <option value="top-right">top-right</option>
+                <option value="bottom-center">bottom-center</option>
+                <option value="custom">custom</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">对齐</span>
+              <select data-path="banner.align">
+                <option value="left">left</option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">文字溢出</span>
+              <select data-path="banner.overflow">
+                <option value="ellipsis">ellipsis</option>
+                <option value="wrap">wrap</option>
+                <option value="shrink">shrink</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">最大行数（1–6）</span>
+              <input type="number" data-path="banner.max_lines" min="1" max="6" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">文字颜色</span>
+              <input type="color" data-path="banner.text_color" />
+            </label>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">尺寸与位置</h3>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">偏移 X</span>
+              <input type="number" data-path="banner.offset.x" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">偏移 Y</span>
+              <input type="number" data-path="banner.offset.y" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">宽度 px</span>
+              <input type="number" data-path="banner.size.w" min="64" max="4000" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">高度 px</span>
+              <input type="number" data-path="banner.size.h" min="32" max="2000" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">缩放（0.2–5）</span>
+              <input type="number" data-path="banner.scale" min="0.2" max="5" step="0.05" />
+            </label>
+            <label class="field">
+              <span class="field-label">旋转（-180–180）</span>
+              <input type="number" data-path="banner.rotation" min="-180" max="180" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">不透明度（0–1）</span>
+              <input type="range" data-path="banner.opacity" min="0" max="1" step="0.05" />
+            </label>
+            <label class="field">
+              <span class="field-label">背景模糊（0–60）</span>
+              <input type="range" data-path="banner.blur" min="0" max="60" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">内边距 X</span>
+              <input type="number" data-path="banner.padding.x" min="0" max="200" step="1" />
+            </label>
+            <label class="field">
+              <span class="field-label">内边距 Y</span>
+              <input type="number" data-path="banner.padding.y" min="0" max="200" step="1" />
+            </label>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">字体</h3>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">字族（可直接输入）</span>
+              <input type="text" data-path="banner.font.family" list="font-families" spellcheck="false" />
+            </label>
+            <label class="field">
+              <span class="field-label">字号 px（8–48）</span>
+              <input type="number" data-path="banner.font.size" min="8" max="48" step="0.5" />
+            </label>
+            <label class="field">
+              <span class="field-label">字重（100–900）</span>
+              <input type="number" data-path="banner.font.weight" min="100" max="900" step="100" />
+            </label>
+            <label class="field">
+              <span class="field-label">字间距 px（-5–20）</span>
+              <input type="number" data-path="banner.font.letter_spacing" min="-5" max="20" step="0.1" />
+            </label>
+          </div>
+          <datalist id="font-families">
+            <option value="system"></option>
+            <option value="serif"></option>
+            <option value="sans-serif"></option>
+            <option value="monospace"></option>
+            <option value="楷体"></option>
+            <option value="微软雅黑"></option>
+            <option value="PingFang SC"></option>
+            <option value="Noto Sans SC"></option>
+          </datalist>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">自定义素材</h3>
+          <p class="hint">shape = custom_svg 或 image 时生效；导入后会写入 svg_path。</p>
+          <div class="fields">
+            <label class="field field-wide">
+              <span class="field-label">素材路径</span>
+              <input type="text" data-path="banner.custom.svg_path" spellcheck="false" placeholder="~/Pictures/mascot.svg" />
+            </label>
+            <label class="field">
+              <span class="field-label">填充方式</span>
+              <select data-path="banner.custom.image_fit">
+                <option value="contain">contain</option>
+                <option value="cover">cover</option>
+                <option value="fill">fill</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">着色（仅 SVG）</span>
+              <input type="color" data-path="banner.custom.tint" />
+            </label>
+          </div>
+          <div class="row-actions">
+            <button class="btn" type="button" data-browse="file-svg">浏览素材</button>
+            <span class="hint">支持 .svg / 图片，导入后自动填入路径</span>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">动画</h3>
+          <p class="hint">待机动画可多选；只选一个时保存为字符串，多选保存为数组，全不选保存为 none。</p>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">blink</span>
+                <span class="hint">眨眼</span>
+              </span>
+              <input class="switch" type="checkbox" data-idle="blink" />
+            </label>
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">wag</span>
+                <span class="hint">摇尾</span>
+              </span>
+              <input class="switch" type="checkbox" data-idle="wag" />
+            </label>
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">float</span>
+                <span class="hint">漂浮</span>
+              </span>
+              <input class="switch" type="checkbox" data-idle="float" />
+            </label>
+          </div>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">入场动画</span>
+              <select data-path="banner.animation.enter">
+                <option value="none">none</option>
+                <option value="fade">fade</option>
+                <option value="slide">slide</option>
+                <option value="pop">pop</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">时长 s</span>
+              <input type="number" data-path="banner.animation.duration" min="0.01" max="5" step="0.05" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 文案 ========== -->
+      <section class="panel" data-panel="text">
+        <div class="panel-head">
+          <h2>文案</h2>
+          <p class="hint">可用变量：<code>{agent}</code> <code>{action}</code> <code>{target}</code> <code>{duration}</code> <code>{time}</code></p>
+        </div>
+        <div class="group">
+          <h3 class="group-title">事件文案</h3>
+          <div class="fields">
+            <label class="field field-wide">
+              <span class="field-label">start · 会话开始</span>
+              <input type="text" data-path="text.start" spellcheck="false" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">running · 执行中</span>
+              <input type="text" data-path="text.running" spellcheck="false" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">waiting · 等待介入</span>
+              <input type="text" data-path="text.waiting" spellcheck="false" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">end · 结束</span>
+              <input type="text" data-path="text.end" spellcheck="false" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">error · 出错</span>
+              <input type="text" data-path="text.error" spellcheck="false" />
+            </label>
+            <label class="field">
+              <span class="field-label">中止按钮文字</span>
+              <input type="text" data-path="text.cancel_button" spellcheck="false" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 声音 ========== -->
+      <section class="panel" data-panel="sound">
+        <div class="panel-head">
+          <h2>声音</h2>
+          <p class="hint">留空 custom_path 时使用 Web Audio 合成音；导入音频会写入 custom_path。</p>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">基础</h3>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main">
+                <span class="row-title">启用声音</span>
+                <span class="hint">关闭后所有提示音静音</span>
+              </span>
+              <input class="switch" type="checkbox" data-path="sound.enabled" />
+            </label>
+          </div>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">音量（0–1）</span>
+              <input type="range" data-path="sound.volume" min="0" max="1" step="0.05" />
+            </label>
+            <label class="field">
+              <span class="field-label">节流 ms（0–10000）</span>
+              <input type="number" data-path="sound.throttle_ms" min="0" max="10000" step="50" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">自定义音频路径</span>
+              <input type="text" data-path="sound.custom_path" spellcheck="false" placeholder="留空则使用合成音" />
+            </label>
+          </div>
+          <div class="row-actions">
+            <button class="btn" type="button" data-browse="file-audio">浏览素材</button>
+            <span class="hint">支持 audio/*，导入后自动填入路径</span>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">合成音参数</h3>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">start 波形</span>
+              <select data-path="sound.synth.start_wave">
+                <option value="sine">sine</option>
+                <option value="square">square</option>
+                <option value="sawtooth">sawtooth</option>
+                <option value="triangle">triangle</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">start 频率 Hz（100–4000）</span>
+              <input type="number" data-path="sound.synth.start_freq" min="100" max="4000" step="10" />
+            </label>
+            <label class="field">
+              <span class="field-label">start 时长 s（0.01–2）</span>
+              <input type="number" data-path="sound.synth.start_dur" min="0.01" max="2" step="0.01" />
+            </label>
+            <label class="field">
+              <span class="field-label">end 波形</span>
+              <select data-path="sound.synth.end_wave">
+                <option value="sine">sine</option>
+                <option value="square">square</option>
+                <option value="sawtooth">sawtooth</option>
+                <option value="triangle">triangle</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">end 频率 Hz（100–4000）</span>
+              <input type="number" data-path="sound.synth.end_freq" min="100" max="4000" step="10" />
+            </label>
+            <label class="field">
+              <span class="field-label">end 时长 s（0.01–2）</span>
+              <input type="number" data-path="sound.synth.end_dur" min="0.01" max="2" step="0.01" />
+            </label>
+            <label class="field">
+              <span class="field-label">alert 波形</span>
+              <select data-path="sound.synth.alert_wave">
+                <option value="sine">sine</option>
+                <option value="square">square</option>
+                <option value="sawtooth">sawtooth</option>
+                <option value="triangle">triangle</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">alert 频率 Hz（100–4000）</span>
+              <input type="number" data-path="sound.synth.alert_freq" min="100" max="4000" step="10" />
+            </label>
+            <label class="field">
+              <span class="field-label">alert 时长 s（0.01–2）</span>
+              <input type="number" data-path="sound.synth.alert_dur" min="0.01" max="2" step="0.01" />
+            </label>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3 class="group-title">按事件播放</h3>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main"><span class="row-title">session_start</span><span class="hint">会话开始</span></span>
+              <input class="switch" type="checkbox" data-path="sound.events.session_start" />
+            </label>
+            <label class="row">
+              <span class="row-main"><span class="row-title">session_end</span><span class="hint">会话结束</span></span>
+              <input class="switch" type="checkbox" data-path="sound.events.session_end" />
+            </label>
+            <label class="row">
+              <span class="row-main"><span class="row-title">need_human</span><span class="hint">需要人工介入</span></span>
+              <input class="switch" type="checkbox" data-path="sound.events.need_human" />
+            </label>
+            <label class="row">
+              <span class="row-main"><span class="row-title">error</span><span class="hint">执行出错</span></span>
+              <input class="switch" type="checkbox" data-path="sound.events.error" />
+            </label>
+            <label class="row">
+              <span class="row-main"><span class="row-title">action</span><span class="hint">动作级提示（默认关闭，避免噪音）</span></span>
+              <input class="switch" type="checkbox" data-path="sound.events.action" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 通知 ========== -->
+      <section class="panel" data-panel="notify">
+        <div class="panel-head">
+          <h2>通知</h2>
+          <p class="hint">桌面通知与遮罩相互独立；缩略图默认关闭以保护隐私。</p>
+        </div>
+        <div class="group">
+          <h3 class="group-title">系统通知</h3>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main"><span class="row-title">启用通知</span><span class="hint">会话开始/结束时弹出系统通知</span></span>
+              <input class="switch" type="checkbox" data-path="notify.enabled" />
+            </label>
+            <label class="row">
+              <span class="row-main"><span class="row-title">附带缩略图</span><span class="hint">默认关闭，隐私优先</span></span>
+              <input class="switch" type="checkbox" data-path="notify.thumbnail" />
+            </label>
+            <label class="row">
+              <span class="row-main"><span class="row-title">静音通知</span><span class="hint">不播放系统通知音</span></span>
+              <input class="switch" type="checkbox" data-path="notify.silent" />
+            </label>
+          </div>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">显示时长 s（1–60）</span>
+              <input type="number" data-path="notify.duration_sec" min="1" max="60" step="1" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 规则 ========== -->
+      <section class="panel" data-panel="rules">
+        <div class="panel-head">
+          <h2>规则</h2>
+          <p class="hint">逗号分隔会保存为字符串数组；免打扰时间段留空表示不启用。</p>
+        </div>
+        <div class="group">
+          <h3 class="group-title">会话规则</h3>
+          <div class="fields">
+            <label class="field">
+              <span class="field-label">TTL ms（1000–600000）</span>
+              <input type="number" data-path="rules.ttl_ms" min="1000" max="600000" step="1000" />
+            </label>
+            <label class="field">
+              <span class="field-label">最小接管 ms（0–10000）</span>
+              <input type="number" data-path="rules.min_takeover_ms" min="0" max="10000" step="100" />
+            </label>
+            <label class="field">
+              <span class="field-label">免打扰开始</span>
+              <input type="time" data-path="rules.dnd_start" />
+            </label>
+            <label class="field">
+              <span class="field-label">免打扰结束</span>
+              <input type="time" data-path="rules.dnd_end" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">忽略事件（逗号分隔）</span>
+              <input type="text" data-path="rules.ignore_events" data-kind="csv" spellcheck="false" placeholder="heartbeat" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">进程白名单（逗号分隔）</span>
+              <input type="text" data-path="rules.process_whitelist" data-kind="csv" spellcheck="false" placeholder="code.exe, chrome.exe" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">进程黑名单（逗号分隔）</span>
+              <input type="text" data-path="rules.process_blacklist" data-kind="csv" spellcheck="false" placeholder="game.exe" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 交互 ========== -->
+      <section class="panel" data-panel="hotkeys">
+        <div class="panel-head">
+          <h2>交互</h2>
+          <p class="hint">热键格式如 <code>Ctrl+Alt+Esc</code>，由修饰键加一个主键组成。</p>
+        </div>
+        <div class="group">
+          <h3 class="group-title">全局热键</h3>
+          <div class="fields">
+            <label class="field field-wide">
+              <span class="field-label">中止热键</span>
+              <input type="text" data-path="hotkeys.cancel" spellcheck="false" placeholder="Ctrl+Alt+Esc" pattern="^([A-Za-z0-9]+\+)*[A-Za-z0-9]+$" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">显示/隐藏遮罩</span>
+              <input type="text" data-path="hotkeys.toggle_visible" spellcheck="false" placeholder="Ctrl+Alt+V" pattern="^([A-Za-z0-9]+\+)*[A-Za-z0-9]+$" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">切换主题</span>
+              <input type="text" data-path="hotkeys.next_theme" spellcheck="false" placeholder="Ctrl+Alt+T" pattern="^([A-Za-z0-9]+\+)*[A-Za-z0-9]+$" />
+            </label>
+          </div>
+          <p class="hint">修改后立即热更新；若与系统占用冲突，后端会在状态条给出警告。</p>
+        </div>
+      </section>
+
+      <!-- ========== 素材 ========== -->
+      <section class="panel" data-panel="assets">
+        <div class="panel-head">
+          <h2>素材与隐私</h2>
+          <p class="hint">素材目录逗号分隔；SVG 会先经过白名单净化再渲染。</p>
+        </div>
+        <div class="group">
+          <h3 class="group-title">素材管线</h3>
+          <div class="fields">
+            <label class="field field-wide">
+              <span class="field-label">素材目录（逗号分隔）</span>
+              <input type="text" data-path="assets.dirs" data-kind="csv" spellcheck="false" placeholder="~/.ai-veil/assets/" />
+            </label>
+            <label class="field">
+              <span class="field-label">单文件上限 bytes（1024–5242880）</span>
+              <input type="number" data-path="assets.max_bytes" min="1024" max="5242880" step="1024" />
+            </label>
+            <label class="field">
+              <span class="field-label">最大边长 px（16–16384）</span>
+              <input type="number" data-path="assets.max_px" min="16" max="16384" step="16" />
+            </label>
+          </div>
+          <div class="rows">
+            <label class="row">
+              <span class="row-main"><span class="row-title">净化 SVG</span><span class="hint">剥离脚本、外部引用与事件属性</span></span>
+              <input class="switch" type="checkbox" data-path="assets.sanitize_svg" />
+            </label>
+          </div>
+        </div>
+        <div class="group">
+          <h3 class="group-title">隐私</h3>
+          <div class="rows">
+            <label class="row row-disabled">
+              <span class="row-main">
+                <span class="row-title">允许上传</span>
+                <span class="hint">本地处理，不上传（固定关闭，不可修改）</span>
+              </span>
+              <input class="switch" type="checkbox" data-path="privacy.upload_enabled" disabled />
+            </label>
+          </div>
+          <div class="fields">
+            <label class="field field-wide">
+              <span class="field-label">日志目录</span>
+              <input type="text" data-path="privacy.log_dir" spellcheck="false" placeholder="~/.ai-veil/logs" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 诊断 ========== -->
+      <section class="panel" data-panel="diag">
+        <div class="panel-head">
+          <h2>诊断</h2>
+          <p class="hint">查看后端推送的警告，或手动注入一条事件测试渲染管线。</p>
+        </div>
+        <div class="group">
+          <h3 class="group-title">运行信息</h3>
+          <dl class="diag-meta">
+            <div><dt>主题</dt><dd id="diag-theme">orange</dd></div>
+            <div><dt>形状</dt><dd id="diag-shape">cat</dd></div>
+          </dl>
+        </div>
+        <div class="group">
+          <h3 class="group-title">警告列表</h3>
+          <ul id="diag-warnings" class="diag-list"></ul>
+        </div>
+        <div class="group">
+          <h3 class="group-title">原始事件</h3>
+          <p class="hint">粘贴一条事件 JSON，发送给后端渲染管线（emit_raw_event）。</p>
+          <textarea id="raw-event" class="raw-event" rows="7" spellcheck="false" placeholder='{"event":"need_human","text":"测试"}'>{"event":"need_human","kind":"need_human","text":"手动注入的测试事件"}</textarea>
+          <div class="row-actions">
+            <button class="btn" type="button" id="btn-emit">发送事件</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 右侧预览：360x220 固定画布 -->
+    <aside class="preview-col">
+      <div class="preview-head">
+        <h2>实时预览</h2>
+        <span class="hint">360 × 220</span>
+      </div>
+      <div id="preview-stage" data-theme="orange">
+        <div id="preview-layer"></div>
+      </div>
+      <p id="preview-error" class="hint preview-error" role="alert"></p>
+      <dl class="preview-meta">
+        <div><dt>形状</dt><dd id="preview-shape">cat</dd></div>
+        <div><dt>主题</dt><dd id="preview-theme">橙光</dd></div>
+        <div><dt>尺寸</dt><dd id="preview-size">320 × 96</dd></div>
+      </dl>
+      <p class="hint">预览使用与遮罩相同的 CSS 变量与形状模块；仅中文字体渲染可能因系统而异。</p>
+    </aside>
+  </div>
+
+  <!-- 底部操作区 -->
+  <footer class="actionbar">
+    <div class="action-group">
+      <button class="btn" type="button" id="btn-reset">恢复默认</button>
+      <button class="btn" type="button" id="btn-export">导出预设</button>
+      <label class="inline-check">
+        <input type="checkbox" id="inline-assets" />
+        <span>内联素材</span>
+      </label>
+      <button class="btn" type="button" id="btn-import">导入预设</button>
+      <button class="btn" type="button" id="btn-open-logs">打开日志</button>
+    </div>
+    <div class="action-group">
+      <button class="btn btn-accent" type="button" id="btn-mock">演示 mock 回放</button>
+      <button class="btn" type="button" id="btn-stop-mock">停止回放</button>
+    </div>
+  </footer>
+
+  <!-- 隐藏的文件输入：导入预设 / SVG 素材 / 音频素材 -->
+  <input type="file" id="file-preset" accept=".json" hidden />
+  <input type="file" id="file-svg" accept=".svg,image/*" data-asset-target="banner.custom.svg_path" hidden />
+  <input type="file" id="file-audio" accept="audio/*" data-asset-target="sound.custom_path" hidden />
+
+  <script type="module" src="settings.js"></script>
+</body>
+</html>

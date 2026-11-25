@@ -1,0 +1,19 @@
+# AI-Veil MCP 桥：把 veil_emit / veil_cancel 暴露给 DSH 的 Agent。
+#
+# 默认走 bridge.mjs（Node 实现，不依赖 Rust 编译产物）：
+#   事件按行追加到 %USERPROFILE%\.ai-veil\events.jsonl，
+#   AI-Veil 用 `ai-veil --adapter file` 消费这个文件。
+#
+# 想直连 AI-Veil 自带的 MCP 服务（需要先 cargo tauri build）时，把下面整段换成：
+#   command: 'E:/.../src-tauri/target/release/ai-veil.exe'
+#   args: ['--adapter', 'mcp_stdio']
+- insert:
+    - id: ai-veil-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ai_veil
+        transport: stdio
+        command: 'C:/Users/win10/.dsh/dsh-runtimes/dsh-primary-runtime/dependencies/node/bin/node.exe'
+        args:
+          - 'E:/ai-veil/dsh-plugin/bridge.mjs'
+        failOnStartupError: false

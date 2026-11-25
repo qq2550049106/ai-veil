@@ -1,0 +1,12 @@
+/* 主题：contrast（高对比黑白）。纯黑底 + 纯白描边，内阴影补一圈白边保证任何壁纸上都清晰；
+   中止按钮用纯红，避免和底色混在一起。 */
+body[data-theme="contrast"] {
+  --v-accent: #ffffff;
+  --v-accent-2: #000000;
+  --v-surface: #000000;
+  --v-surface-fg: #ffffff;
+  --v-surface-stroke: #ffffff;
+  --v-abort-bg: #ff0000;
+  --v-abort-fg: #ffffff;
+  --v-glow: inset 0 0 0 2px #ffffff;
+}
